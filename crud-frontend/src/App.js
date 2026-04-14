@@ -12,7 +12,7 @@ const App = () => {
 
   const fetchUsers = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/users');
+      const res = await axios.get('https://crudapp-wdls.onrender.com/api/users');
       setUsers(res.data);
     } catch (error) {
       console.error("There was an error fetching the users!", error);
@@ -27,10 +27,10 @@ const App = () => {
     e.preventDefault();
     try {
       if (editingUserId) {
-        await axios.put(`http://localhost:5000/api/users/${editingUserId}`, form);
+        await axios.put(`https://crudapp-wdls.onrender.com/api/users/${editingUserId}`, form);
         setEditingUserId(null);
       } else {
-        await axios.post('http://localhost:5000/api/users', form);
+        await axios.post('https://crudapp-wdls.onrender.com/api/users', form);
       }
       setForm({ name: '', email: '', imageUrl: '' });
       fetchUsers();
@@ -41,7 +41,7 @@ const App = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/users/${id}`);
+      await axios.delete(`https://crudapp-wdls.onrender.com/api/users/${id}`);
       fetchUsers();
     } catch (error) {
       console.error("There was an error deleting the user!", error);
