@@ -1,7 +1,7 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-
 const app = express();
 
 // Middleware
@@ -9,7 +9,8 @@ app.use(express.json());
 app.use(cors());
 
 // MongoDB Connection
-const mongoURI = 'mongodb://127.0.0.1:27017/crudDB'; // Database named crudDB
+const mongoURI = process.env.mongoURI;
+// console.log("ENV:", process.env.mongoURI);
 
 mongoose.connect(mongoURI)
   .then(() => console.log('Connected to MongoDB'))
@@ -65,7 +66,7 @@ app.delete('/api/users/:id', async (req, res) => {
 });
 
 // Start the server
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
