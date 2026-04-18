@@ -1,24 +1,27 @@
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { Link, Route, Routes, useNavigate } from "react-router-dom";
 import Home from "./components/Home";
 import Dashboard from "./components/Dashboard";
 import Users from "./components/Users";
-
 import "./styles/App.css";
 
 const App = () => {
   const [users, setUsers] = useState([]);
   const [form, setForm] = useState({
-  name: "",
-  email: "",
-  imageUrl: ""
-});
+    name: "",
+    email: "",
+    imageUrl: "",
+  });
   const [editingUserId, setEditingUserId] = useState(null);
+  const [toastMsg, setToastMsg] = useState(null);
 
   const navigate = useNavigate();
+
+  const toast = (msg, type = "success") => {
+    setToastMsg({ msg, type });
+    setTimeout(() => setToastMsg(null), 2500);
+  };
 
   const fetchUsers = async () => {
     const res = await axios.get("https://crudapp-wdls.onrender.com/api/users");
@@ -35,13 +38,13 @@ const App = () => {
     if (editingUserId) {
       await axios.put(
         `https://crudapp-wdls.onrender.com/api/users/${editingUserId}`,
-        form,
+        form
       );
-      toast.success("User updated successfully ✅");
+      toast("User updated successfully");
       setEditingUserId(null);
     } else {
       await axios.post("https://crudapp-wdls.onrender.com/api/users", form);
-      toast.success("User created successfully 🎉");
+      toast("User created successfully");
     }
 
     setForm({ name: "", email: "", imageUrl: "" });
@@ -52,12 +55,16 @@ const App = () => {
     if (!window.confirm("Delete user?")) return;
 
     await axios.delete(`https://crudapp-wdls.onrender.com/api/users/${id}`);
-    toast.error("User deleted ❌");
+    toast("User deleted", "error");
     fetchUsers();
   };
 
   const handleEdit = (user) => {
-    setForm(user);
+    setForm({
+      name: user.name,
+      email: user.email,
+      imageUrl: user.imageUrl,
+    });
     setEditingUserId(user._id);
     navigate("/dashboard");
   };
@@ -98,13 +105,27 @@ const App = () => {
           />
         </Routes>
       </div>
-      <ToastContainer
-      position="top-center"
-      autoClose={2000}
-      theme="dark"
-    />
+
+      {toastMsg && (
+        <div
+          style={{
+            position: "fixed",
+            top: "20px",
+            left: "50%",
+            transform: "translateX(-50%)",
+            background: toastMsg.type === "success" ? "#4caf50" : "#f44336",
+            color: "white",
+            padding: "12px 24px",
+            borderRadius: "8px",
+            fontWeight: "bold",
+            zIndex: 9999,
+            boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
+          }}
+        >
+          {toastMsg.msg}
+        </div>
+      )}
     </div>
-    
   );
 };
 
